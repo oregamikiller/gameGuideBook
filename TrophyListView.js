@@ -35,7 +35,7 @@ var TrophyListView = React.createClass({
         this.fetchData();
     },
     fetchData: function () {
-        fetch('http://semidream.com/trophydetail/' + gameid)
+        fetch('https://semidream.com/trophydetail/' + gameid)
             .then((response) => response.json())
             .then((responseData) => {
                 this.setState({

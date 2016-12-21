@@ -4,7 +4,7 @@ import { WebView, BackAndroid } from 'react-native';
 
 
 var targetUrl = false;
-var DEFAULTUrl = 'http://semidream.com';
+var DEFAULTUrl = 'https://semidream.com';
 
 class CustomWebView extends Component {
     componentDidMount () {

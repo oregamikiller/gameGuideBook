@@ -37,11 +37,11 @@ var MainList = React.createClass({
     },
     fetchData: function () {
         switch(currentIndex){
-            case 0: dataUrl = 'http://semidream.com/trophydata/?platForm=ps4';break;
-            case 1: dataUrl = 'http://semidream.com/trophydata/?platForm=ps3';break;
-            case 2: dataUrl = 'http://semidream.com/trophydata/?platForm=psvita';break;
-            case 3: dataUrl = 'http://semidream.com/trophydata/title/' + 1;break;
-            default : dataUrl = 'http://semidream.com/trophydata/title/' + 1;break;
+            case 0: dataUrl = 'https://semidream.com/trophydata/?platForm=ps4';break;
+            case 1: dataUrl = 'https://semidream.com/trophydata/?platForm=ps3';break;
+            case 2: dataUrl = 'https://semidream.com/trophydata/?platForm=psvita';break;
+            case 3: dataUrl = 'https://semidream.com/trophydata/title/' + 1;break;
+            default : dataUrl = 'https://semidream.com/trophydata/title/' + 1;break;
         }
         fetch(dataUrl)
             .then((response) => response.json())
@@ -61,11 +61,11 @@ var MainList = React.createClass({
 
     fetchNext: function () {
         switch(currentIndex){
-            case 0: dataUrl = 'http://semidream.com/trophydata/?platForm=ps4&page=';break;
-            case 1: dataUrl = 'http://semidream.com/trophydata/?platForm=ps3&page=';break;
-            case 2: dataUrl = 'http://semidream.com/trophydata/?platForm=psvita&page=';break;
-            case 3: dataUrl = 'http://semidream.com/trophydata/title/' + 1;break;
-            default : dataUrl = 'http://semidream.com/trophydata/title/' + 1;break;
+            case 0: dataUrl = 'https://semidream.com/trophydata/?platForm=ps4&page=';break;
+            case 1: dataUrl = 'https://semidream.com/trophydata/?platForm=ps3&page=';break;
+            case 2: dataUrl = 'https://semidream.com/trophydata/?platForm=psvita&page=';break;
+            case 3: dataUrl = 'https://semidream.com/trophydata/title/' + 1;break;
+            default : dataUrl = 'https://semidream.com/trophydata/title/' + 1;break;
         }
         let page = parseInt(this.state.dataSource.getRowCount() / 20) + 1;
         if (requestFinished && hasMore && !searchFlag) {
@@ -195,7 +195,7 @@ var MainList = React.createClass({
             rowData.picUrl = rowData.pic_url;
         }
         if (rowData.picUrl === null) {
-            rowData.picUrl = 'http://p.pstatp.com/thumb/ca20003cd127d9542be';
+            rowData.picUrl = 'https://p.pstatp.com/thumb/ca20003cd127d9542be';
         }
         return (
             <TouchableHighlight onPress={() => this.pressRow(rowID)}>
@@ -214,7 +214,7 @@ var MainList = React.createClass({
     SearchTitle: function (text) {
         if (text.length >= 1) {
             searchFlag = true;
-            dataUrl = 'http://semidream.com/trophydata/title/';
+            dataUrl = 'https://semidream.com/trophydata/title/';
             fetch(dataUrl + text)
                 .then((response) => response.json())
                 .then((responseData) => {
