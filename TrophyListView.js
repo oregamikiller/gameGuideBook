@@ -8,7 +8,6 @@ var {
         TouchableHighlight,
         StyleSheet,
         RecyclerViewBackedScrollView,
-        BackAndroid,
         Text,
         View,
         Platform,
@@ -22,16 +21,6 @@ var TrophyListView = React.createClass({
         description: 'Performant, scrollable list of data.'
     },
     componentDidMount: function () {
-        var self = this;
-        BackAndroid.addEventListener('hardwareBackPress', function () {
-            if (self.props.navigator.getCurrentRoutes().length > 1) {
-                self.props.navigator.pop();
-                return true;
-            } else {
-                return false;
-            }
-        });
-
         this.fetchData();
     },
     fetchData: function () {

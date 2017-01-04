@@ -10,9 +10,9 @@ var {
         RecyclerViewBackedScrollView,
         Text,
         View,
+        AsyncStorage,
         TextInput,
-        BackAndroid,
-        WebView,
+        Modal,
         } = ReactNative;
 import TabBar from 'react-native-xtabbar';
 
@@ -26,6 +26,10 @@ var MainList = React.createClass({
         description: 'Performant, scrollable list of data.'
     },
 
+    setModalVisible(visible) {
+        this.setState({modalVisible: visible});
+    },
+
     fetchData: function () {
         switch(currentIndex){
             case 0: dataUrl = 'https://semidream.com/trophydata/?platForm=ps4';break;
@@ -34,20 +38,33 @@ var MainList = React.createClass({
             case 3: dataUrl = 'https://semidream.com/trophydata/title/' + 1;break;
             default : dataUrl = 'https://semidream.com/trophydata/title/' + 1;break;
         }
-        fetch(dataUrl)
-            .then((response) => response.json())
-            .then((responseData) => {
-                dataList[currentIndex] = [].concat(responseData);
-                if (responseData.length < 20) { hasMore = false;
-                } else {
-                    hasMore = true;
-                }
+        if (currentIndex === 3) {
+            AsyncStorage.getItem('@localStore:' + 'visited', (err, result) => {
+                result = result || JSON.stringify([]);
+                dataList[currentIndex] = JSON.parse(result).reverse();
                 this.setState({
-                    dataSource: this.state.dataSource.cloneWithRows(dataList[currentIndex]),
+                    dataSource: this.state.dataSource.cloneWithRows(JSON.parse(result).reverse()),
                     loaded: true,
                 });
-            }).catch(console.log)
-            .done();
+            });
+
+        } else {
+            fetch(dataUrl)
+                .then((response) => response.json())
+                .then((responseData) => {
+                    dataList[currentIndex] = [].concat(responseData);
+                    if (responseData.length < 20) { hasMore = false;
+                    } else {
+                        hasMore = true;
+                    }
+                    this.setState({
+                        dataSource: this.state.dataSource.cloneWithRows(dataList[currentIndex]),
+                        loaded: true,
+                    });
+                }).catch(console.log)
+                .done();
+        }
+
     },
 
     fetchNext: function () {
@@ -86,11 +103,27 @@ var MainList = React.createClass({
         }
     },
 
+    getSearchBar : function () {
+        if (currentIndex === 3) {
+            return null;
+        } else {
+            return <TextInput ref = "searchInput"
+                           style={styles.searchbox}
+                           placeholder="请输入想搜索游戏的标题"
+                           returnKeyType="search"
+                           keyboardType="default"
+                           onChangeText={text => this.SearchTitle(text)}
+                           vis
+                />;
+        }
+    },
+
 
     render: function () {
         var self = this;
         return (
             <View style={styles.container}>
+                {this.getSearchBar()}
                 <TabBar
                     style={styles.content}
                     onItemSelected={(index) => {console.log(`current item's index is ${index}`);
@@ -159,12 +192,15 @@ var MainList = React.createClass({
                     <TabBar.Item
                         icon={require('./img/tabbaricon4.png')}
                         selectedIcon={require('./img/tabbaricon4.png')}
-                        title='我的'>
-                        <View style={{padding: 30}}>
-                            <Text>
-                                用户注册登录后自定义功能开发中,有对本应用的意见和建议可以联系madaow@163.com
-                            </Text>
-                        </View>
+                        title='历史'>
+                        <ListView
+                            dataSource={this.state.dataSource}
+                            renderRow={this._renderRow}
+                            enableEmptySections={true}
+                            renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
+                            renderSeparator={this._renderSeperator}
+                            onEndReachedThreshold={20}
+                        />
                     </TabBar.Item>
                 </TabBar>
             </View>
@@ -215,7 +251,32 @@ var MainList = React.createClass({
     },
 
     pressRow: function (rowID:number) {
-        Actions.detail({gameid: dataList[currentIndex][rowID].id});
+
+        if (currentIndex !== 3 || searchFlag) {
+            try {
+                AsyncStorage.getItem('@localStore:' + 'visited', (err, result) => {
+                    if(result) {
+                        var array = [].concat(JSON.parse(result));
+                        array.push(dataList[currentIndex][rowID]);
+                        AsyncStorage.setItem('@localStore:' + 'visited', JSON.stringify(array)).then(function () {
+                            Actions.detail({gameid: dataList[currentIndex][rowID].id});
+                        });
+                    } else {
+                        result = [];
+                        result.push(dataList[currentIndex][rowID]);
+                        AsyncStorage.setItem('@localStore:' + 'visited', JSON.stringify(result)).then(function () {
+                            Actions.detail({gameid: dataList[currentIndex][rowID].id});
+                        });
+                    }
+
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            Actions.detail({gameid: dataList[currentIndex][rowID].id});
+        }
+
     },
 
     _renderSeperator: function (sectionID:number, rowID:number, adjacentRowHighlighted:bool) {
@@ -243,6 +304,7 @@ var hasMore= true;
 var searchFlag = false;
 var requestFinished = true;
 var currentIndex = 0;
+var showSearch = false;
 
 var hashCode = function (str) {
     var hash = 15;
