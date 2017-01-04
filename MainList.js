@@ -16,6 +16,8 @@ var {
         } = ReactNative;
 import TabBar from 'react-native-xtabbar';
 
+import {Actions} from 'react-native-router-flux';
+
 var CustomWebView = require('./CustomWebView');
 
 var MainList = React.createClass({
@@ -24,17 +26,6 @@ var MainList = React.createClass({
         description: 'Performant, scrollable list of data.'
     },
 
-    componentDidMount: function () {
-        var self = this;
-        BackAndroid.addEventListener('hardwareBackPress', function () {
-            if (self.props.navigator.getCurrentRoutes().length > 1) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        //this.fetchData();
-    },
     fetchData: function () {
         switch(currentIndex){
             case 0: dataUrl = 'https://semidream.com/trophydata/?platForm=ps4';break;
@@ -100,18 +91,11 @@ var MainList = React.createClass({
         var self = this;
         return (
             <View style={styles.container}>
-                <TextInput ref = "searchInput"
-                           style={styles.searchbox}
-                           placeholder="请输入想搜索游戏的标题"
-                           returnKeyType="search"
-                           keyboardType="default"
-                           onChangeText={text => this.SearchTitle(text)}
-                    />
                 <TabBar
                     style={styles.content}
                     onItemSelected={(index) => {console.log(`current item's index is ${index}`);
                         currentIndex = index;
-                        this.refs.searchInput.setNativeProps({text: ''});
+
                         searchFlag = false;
                         hasMore = false;
                         this.fetchData();
@@ -125,8 +109,7 @@ var MainList = React.createClass({
                         icon={require('./img/tabbaricon1.jpg')}
                         selectedIcon={require('./img/tabbaricon1.jpg')}
                         onPress={() => {
-            // do sth
-        }}
+                }}
                         title='PS4'>
 
                             <ListView
@@ -232,11 +215,7 @@ var MainList = React.createClass({
     },
 
     pressRow: function (rowID:number) {
-
-            this.props.navigator.push({
-                        name: 'detail',
-                        gameid: dataList[currentIndex][rowID].id
-                    });
+        Actions.detail({gameid: dataList[currentIndex][rowID].id});
     },
 
     _renderSeperator: function (sectionID:number, rowID:number, adjacentRowHighlighted:bool) {
@@ -275,11 +254,11 @@ var hashCode = function (str) {
 
 var styles = StyleSheet.create({
     container: {
+        marginTop: 55,
         flex: 1,
         flexDirection: 'column',
     },
     searchbox: {
-        marginTop: 20,
         padding: 3,
         fontSize: 20,
         borderColor: 'red',

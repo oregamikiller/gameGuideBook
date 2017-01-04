@@ -61,7 +61,7 @@ var TrophyListView = React.createClass({
     render: function () {
         return (
 
-            <ListView style={{marginTop: 20}}
+            <ListView style={{marginTop: 55}}
                 dataSource={this.state.dataSource}
                 enableEmptySections={true}
                 renderRow={this._renderRow}
@@ -79,8 +79,7 @@ var TrophyListView = React.createClass({
             rowData.descCHN = des[1];
         }
         return (
-            <TouchableHighlight
-                onPress={() => this.pressRow(rowID)}>
+            <TouchableHighlight>
                 <View>
                     <View style={styles.row}>
                         <Image style={styles.thumb} source={{uri:rowData.picUrl}}/>
