@@ -254,13 +254,23 @@ var MainList = React.createClass({
 
         if (currentIndex !== 3 || searchFlag) {
             try {
+                let already = false;
                 AsyncStorage.getItem('@localStore:' + 'visited', (err, result) => {
                     if(result) {
                         var array = [].concat(JSON.parse(result));
-                        array.push(dataList[currentIndex][rowID]);
-                        AsyncStorage.setItem('@localStore:' + 'visited', JSON.stringify(array)).then(function () {
-                            Actions.detail({gameid: dataList[currentIndex][rowID].id});
+                        array.forEach((item)=> {
+                            if(item.id === dataList[currentIndex][rowID].id){
+                                already = true;
+                            }
                         });
+                        if (!already){
+                            array.push(dataList[currentIndex][rowID]);
+                            AsyncStorage.setItem('@localStore:' + 'visited', JSON.stringify(array)).then(function () {
+                                Actions.detail({gameid: dataList[currentIndex][rowID].id});
+                            });
+                        } else {
+                            Actions.detail({gameid: dataList[currentIndex][rowID].id});
+                        }
                     } else {
                         result = [];
                         result.push(dataList[currentIndex][rowID]);
