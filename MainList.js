@@ -220,7 +220,7 @@ var MainList = React.createClass({
             <TouchableHighlight onPress={() => this.pressRow(rowID)}>
                 <View>
                     <View style={styles.row}>
-                        <Image style={styles.thumb} source={{uri:rowData.picUrl}}/>
+                        <Image style={styles.thumb} source={{uri:rowData.picUrl.replace("photo.d7vg.com", "photo.psnine.com")}}/>
                         <Text style={styles.text}>
                             {rowData.title }{"\n"}{rowData.desc}{"\n"}{rowData.plantForm}
                         </Text>
